@@ -327,8 +327,8 @@ func init() {
 			DatastoreMetricExclude:  nil,
 			DatastoreInclude:        []string{"/*/datastore/**"},
 			Separator:               "_",
-			CustomAttributeInclude:  []string{},
-			CustomAttributeExclude:  []string{"*"},
+			CustomAttributeInclude:  nil,
+			CustomAttributeExclude:  nil,
 			UseIntSamples:           true,
 
 			MaxQueryObjects:         256,

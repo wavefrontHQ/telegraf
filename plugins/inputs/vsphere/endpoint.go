@@ -271,6 +271,7 @@ func (e *Endpoint) init(ctx context.Context) error {
 	}
 
 	// Initial load of custom field metadata
+	log.Printf("Enabled %s %s %s", e.customAttrEnabled, e.Parent.CustomAttributeExclude, e.Parent.CustomAttributeInclude)
 	if e.customAttrEnabled {
 		fields, err := client.GetCustomFields(ctx)
 		if err != nil {
