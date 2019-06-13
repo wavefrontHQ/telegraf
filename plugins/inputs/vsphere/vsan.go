@@ -357,6 +357,9 @@ func (e *Endpoint) queryResyncSummary(ctx context.Context, vsanClient *soap.Clie
 	}
 
 	resp, err := vsanmethods.VsanQuerySyncingVsanObjects(ctx, vsanClient, &request)
+	if err != nil {
+		return err
+	}
 	fields := make(map[string]interface{})
 	fields["TotalBytesToSync"] = resp.Returnval.TotalBytesToSync
 	fields["TotalObjectsToSync"] = resp.Returnval.TotalObjectsToSync
