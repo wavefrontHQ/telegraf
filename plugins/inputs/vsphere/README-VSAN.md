@@ -25,25 +25,25 @@ The configuration of vSAN resource is slightly different from hosts, vms and oth
   # vsan_perf_metric_exclude = ["*"]
   vsan_cluster_include = ["/*/host/**"]
 ```
-* To enable vSAN, you need to set **vsan_enabled** = true. vSAN collection is disabled by default.
+* To enable vSAN, you need to set `vsan_enabled = true`. vSAN collection is disabled by default.
 
 
 
-* Use **vsan_perf_metric_include** = [...] to define the vSAN performance entities you want to collect. 
+* Use `vsan_perf_metric_include = [...]` to define the vSAN performance entities you want to collect. 
 e.g. vsan_perf_metric_include = ["host-domclient", "cache-disk", "disk-group", "capacity-disk"]. 
 To include all vSAN performance supported metrics, use `vsan_perf_metric_include = [ "*" ]`
 To disable all the vSAN performance metrics, use `vsan_perf_metric_exclude** = [ "*" ]`
 
-* NOTE: You need to enable vsan performance service for your vcenter first. To do it, you should go to vSphere Client -> 
+* NOTE: You need to enable vsan performance service for your vcenter first. To do it, you can go to vSphere Client -> 
 click cluster's name -> open configure -> in vSAN Services menu -> enable performance service
 
-* **vsan_metric_skip_verify** defines whether to skip verifying vSAN metrics against the ones from [GetSupportedEntityTypes API](https://code.vmware.com/apis/48/vsan#/doc/vim.cluster.VsanPerformanceManager.html#getSupportedEntityTypes). 
-This option is given because some internal performance entities are not returned by the API, but we want to offer the flexibility if user really need the stats. 
-When set false, anything not in supported entity list will be filtered out. 
-When set true, queried metrics will be identical to vsan_perf_metric_include and the exclusive array will not be used in this case. By default the value is false.
+* `vsan_metric_skip_verify` defines whether to skip verifying vSAN metrics against the ones from [GetSupportedEntityTypes API](https://code.vmware.com/apis/48/vsan#/doc/vim.cluster.VsanPerformanceManager.html#getSupportedEntityTypes). 
+This option is given because some internal performance entities are not returned by the API, but we want to offer the flexibility if users really need the stats. 
+When set false, entity types not returned by the API will be filtered out. 
+When set true, queried metrics will be identical to vsan_perf_metric_include and the exclusive array will not be used in this case. By default the value is `false`.
 
-* **vsan_cluster_include** defines a list of inventory paths that will be used to select a portion of vSAN clusters.
-vSAN metrics are only collected on cluster level. Therefore, use the same way as inventory paths for [vsphere's clusters](README.md#inventory-paths)
+* `vsan_cluster_include` defines a list of inventory paths that will be used to select a portion of vSAN clusters.
+vSAN metrics are only collected on a cluster level. Therefore, use the same way as inventory paths for [vsphere's clusters](README.md#inventory-paths)
  
 
 ## Measurements & Fields
@@ -107,6 +107,8 @@ NOTE: vSAN performance measurements and fields may vary on the vSAN versions.
 - vsan-vnic-net
     - vnic
     - stackName
+- others
+    - uuid
 
 ## Sample output
 ```
