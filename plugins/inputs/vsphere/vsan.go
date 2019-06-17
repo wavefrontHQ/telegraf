@@ -438,7 +438,9 @@ func populateCMMDSTags(tags map[string]string, entityName string, uuid string, c
 				newTags["hostname"] = c["hostname"].(string)
 			}
 		}
-	} else {
+	}
+	// If no tags are added in previous steps, we add uuid for it
+	if len(newTags) == len(tags) {
 		newTags["uuid"] = uuid
 	}
 	return newTags
