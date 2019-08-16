@@ -4,7 +4,9 @@ import (
 	"errors"
 	"sync"
 	"testing"
+	"time"
 
+	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -443,8 +445,105 @@ func TestGatherNvme(t *testing.T) {
 
 	wg.Add(1)
 	gatherDisk(acc, true, true, "", "", "", wg)
-	assert.Equal(t, 6, acc.NFields(), "Wrong number of fields gathered")
-	assert.Equal(t, uint64(4), acc.NMetrics(), "Wrong number of metrics gathered")
+
+	expected := []telegraf.Metric{
+		testutil.MustMetric("smart_device",
+			map[string]string{
+				"device":    ".",
+				"model":     "TS128GMTE850",
+				"serial_no": "D704940282?",
+			},
+			map[string]interface{}{
+				"exit_status": 0,
+				"health_ok":   true,
+				"temp_c":      38,
+			},
+			time.Now(),
+		),
+		testutil.MustMetric("smart_attribute",
+			map[string]string{
+				"device":    ".",
+				"id":        "9",
+				"name":      "Power_On_Hours",
+				"serial_no": "D704940282?",
+			},
+			map[string]interface{}{
+				"raw_value": 6038,
+			},
+			time.Now(),
+		),
+		testutil.MustMetric("smart_attribute",
+			map[string]string{
+				"device":    ".",
+				"id":        "12",
+				"name":      "Power_Cycle_Count",
+				"serial_no": "D704940282?",
+			},
+			map[string]interface{}{
+				"raw_value": 472,
+			},
+			time.Now(),
+		),
+		testutil.MustMetric("smart_attribute",
+			map[string]string{
+				"device":    ".",
+				"name":      "Media_and_Data_Integrity_Errors",
+				"serial_no": "D704940282?",
+			},
+			map[string]interface{}{
+				"raw_value": 0,
+			},
+			time.Now(),
+		),
+		testutil.MustMetric("smart_attribute",
+			map[string]string{
+				"device":    ".",
+				"name":      "Error_Information_Log_Entries",
+				"serial_no": "D704940282?",
+			},
+			map[string]interface{}{
+				"raw_value": 119699,
+			},
+			time.Now(),
+		),
+		testutil.MustMetric("smart_attribute",
+			map[string]string{
+				"device":    ".",
+				"name":      "Available_Spare",
+				"serial_no": "D704940282?",
+			},
+			map[string]interface{}{
+				"raw_value": 100,
+			},
+			time.Now(),
+		),
+		testutil.MustMetric("smart_attribute",
+			map[string]string{
+				"device":    ".",
+				"id":        "194",
+				"name":      "Temperature_Celsius",
+				"serial_no": "D704940282?",
+			},
+			map[string]interface{}{
+				"raw_value": 38,
+			},
+			time.Now(),
+		),
+		testutil.MustMetric("smart_attribute",
+			map[string]string{
+				"device":    ".",
+				"name":      "Critical_Warning",
+				"serial_no": "D704940282?",
+			},
+			map[string]interface{}{
+				"raw_value": int64(9),
+			},
+			time.Now(),
+		),
+	}
+
+	testutil.RequireMetricsEqual(t, expected, acc.GetTelegrafMetrics(),
+		testutil.SortMetrics(), testutil.IgnoreTime())
 }
 
 // smartctl output
@@ -879,7 +978,7 @@ Local Time is: Fri Jun 15 11:41:35 2018 UTC
 SMART overall-health self-assessment test result: PASSED
 
 SMART/Health Information (NVMe Log 0x02, NSID 0xffffffff)
-Critical Warning: 0x00
+Critical Warning: 0x09
 Temperature: 38 Celsius
 Available Spare: 100%
 Available Spare Threshold: 10%
