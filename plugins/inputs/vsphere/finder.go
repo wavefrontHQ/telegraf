@@ -262,6 +262,7 @@ func init() {
 		"Datastore":              {"parent", "info"},
 		"ClusterComputeResource": {"parent"},
 		"Datacenter":             {"parent"},
+		"ResourcePool":           {"parent"},
 	}
 
 	containers = map[string]interface{}{

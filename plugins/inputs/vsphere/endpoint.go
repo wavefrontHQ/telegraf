@@ -209,6 +209,23 @@ func NewEndpoint(ctx context.Context, parent *VSphere, url *url.URL) (*Endpoint,
 			getObjects:       getDatastores,
 			parent:           "",
 		},
+		"resourcepool": {
+			name:             "resourcepool",
+			vcName:           "ResourcePool",
+			pKey:             "respoolname",
+			enabled:          anythingEnabled(parent.ResourcePoolMetricExclude),
+			realTime:         false,
+			sampling:         300,
+			objects:          make(objectMap),
+			filters:          newFilterOrPanic(parent.ResourcePoolMetricInclude, parent.ResourcePoolMetricExclude),
+			paths:            parent.ResourcePoolInclude,
+			excludePaths:     parent.ResourcePoolExclude,
+			simple:           isSimple(parent.ResourcePoolMetricInclude, parent.ResourcePoolMetricExclude),
+			include:          parent.ResourcePoolMetricInclude,
+			collectInstances: parent.ResourcePoolInstances,
+			getObjects:       getResourcePools,
+			parent:           "cluster",
+		},
 	}
 
 	// Start discover and other goodness
@@ -639,6 +656,23 @@ func getClusters(ctx context.Context, e *Endpoint, filter *ResourceFilter) (obje
 		if err != nil {
 			return nil, err
 		}
+	}
+	return m, nil
+}
+
+func getResourcePools(ctx context.Context, e *Endpoint, filter *ResourceFilter) (objectMap, error) {
+	var resources []mo.ResourcePool
+	ctx1, cancel1 := context.WithTimeout(ctx, e.Parent.Timeout.Duration)
+	defer cancel1()
+	err := filter.FindAll(ctx1, &resources)
+	if err != nil {
+		return nil, err
+	}
+	m := make(objectMap, len(resources))
+	for _, r := range resources {
+		key := r.ExtensibleManagedObject.Reference().Value
+		m[key] = objectRef{
+			name: r.Name, ref: r.ExtensibleManagedObject.Reference(), parentRef: r.Parent }
 	}
 	return m, nil
 }
